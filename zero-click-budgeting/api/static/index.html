@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zero-Click Budgeting</title>
+    <style>
+      body { font-family: system-ui, sans-serif; padding: 24px; }
+      .bar { height: 24px; background: #eee; border-radius: 12px; overflow: hidden; }
+      .fill { height: 24px; width: 0%; transition: width .5s ease; }
+      .row { margin-top: 12px; }
+    </style>
+  </head>
+  <body>
+    <h2>Budget Fuel Gauge</h2>
+    <div class="bar"><div id="fill" class="fill"></div></div>
+    <div class="row">Usage: <span id="pct">0</span>% — <strong id="status">green</strong></div>
+    <div class="row">Spend: ₹<span id="spend">0</span> / Limit: ₹<span id="limit">0</span></div>
+
+    <script>
+      async function refreshGauge() {
+        const res = await fetch('/budget/gauge');
+        const g = await res.json();
+        const fill = document.getElementById('fill');
+        const pct = document.getElementById('pct');
+        const status = document.getElementById('status');
+        const spend = document.getElementById('spend');
+        const limit = document.getElementById('limit');
+        pct.textContent = g.percent;
+        status.textContent = g.status;
+        spend.textContent = g.spend.toFixed(2);
+        limit.textContent = g.monthly_limit.toFixed(2);
+        const color = g.status === 'red' ? '#e11d48' : (g.status === 'orange' ? '#f59e0b' : '#10b981');
+        fill.style.background = color;
+        fill.style.width = g.percent + '%';
+      }
+      refreshGauge();
+      setInterval(refreshGauge, 2000);
+    </script>
+  </body>
+  </html>

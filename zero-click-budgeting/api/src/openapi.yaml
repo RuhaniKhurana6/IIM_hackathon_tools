@@ -1,0 +1,25 @@
+openapi: 3.0.0
+info:
+  title: Zero-Click Budgeting API
+  version: 0.1.0
+paths:
+  /health:
+    get:
+      responses:
+        '200': { description: OK }
+  /webhook/sms:
+    post:
+      responses:
+        '202': { description: Accepted }
+  /webhook/upi:
+    post:
+      responses:
+        '202': { description: Accepted }
+  /webhook/receipt:
+    post:
+      responses:
+        '202': { description: Accepted }
+  /budget/gauge:
+    get:
+      responses:
+        '200': { description: Gauge }

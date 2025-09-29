@@ -1,0 +1,1 @@
+INSERT INTO budgets (user_id, monthly_limit, config) VALUES ('demo', 50000, '{}');

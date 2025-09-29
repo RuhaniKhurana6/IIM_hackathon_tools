@@ -1,0 +1,1 @@
+Place Kubernetes manifests for api, workers, frontend, and db here when needed.

@@ -1,0 +1,8 @@
+{
+  "name": "budget-engine",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "pytest || echo 'Install pytest to run tests'"
+  }
+}
