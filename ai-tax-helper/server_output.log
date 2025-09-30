@@ -1,0 +1,12 @@
+Warning: LangChain not available. Using mock responses only.
+Starting AI Tax Helper Chatbot Server...
+Available endpoints:
+   - POST /api/chatbot/chat - Main chat interface
+   - POST /api/chatbot/initialize - Load sample data
+   - GET /api/chatbot/insights - Get insights
+   - GET /health - Health check
+Server will be available at: http://localhost:5000
+Press Ctrl+C to stop the server
+
+ * Serving Flask app 'app'
+ * Debug mode: on

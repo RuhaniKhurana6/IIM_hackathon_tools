@@ -2,6 +2,7 @@ import os
 import sys
 from typing import List, Dict, Any
 from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
 from dotenv import load_dotenv
 
 # Ensure budget-engine is importable
@@ -16,6 +17,7 @@ load_dotenv(os.path.join(PROJECT_ROOT, ".env"))
 from budget_engine import compute_gauge  # type: ignore
 
 app = Flask(__name__, static_folder=os.path.join(CUR_DIR, "static"))
+CORS(app)  # Enable CORS for all routes
 
 # In-memory store to keep demo simple
 TRANSACTIONS: List[Dict[str, Any]] = []

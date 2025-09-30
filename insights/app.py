@@ -1,18 +1,18 @@
-# insights/app.py
-from flask import Flask
-from insights.routes.insights_bp import insights_bp
+import os
+from flask import Flask, jsonify
+from flask_cors import CORS
+from routes.insights_bp import insights_bp
 
-def create_app():
-    app = Flask(__name__)
-    app.register_blueprint(insights_bp, url_prefix='/api/insights')
+# Create Flask app
+app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
-    @app.route("/", methods=["GET"])
-    def home():
-        return "Welcome to Expense Insights API 🚀. Use Postman to test /api/insights/sms or /api/insights/csv."
+# Register blueprints
+app.register_blueprint(insights_bp, url_prefix='/api/insights')
 
-    return app
-
+@app.route('/health')
+def health():
+    return jsonify({'status': 'ok'})
 
 if __name__ == '__main__':
-    app = create_app()
     app.run(debug=True)

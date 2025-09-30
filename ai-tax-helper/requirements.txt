@@ -1,3 +1,14 @@
 flask
+pandas
+flask-cors
+openai
+langchain
+langchain-openai
+langchain-community
+chromadb
+numpy
+scipy
 scikit-learn
-joblib
+faiss-cpu
+tiktoken
+pydantic

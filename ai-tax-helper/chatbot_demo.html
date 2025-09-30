@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tax Helper Chatbot Demo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .status {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .status-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            flex: 1;
+            margin: 0 10px;
+            text-align: center;
+        }
+        .running { border-left: 4px solid #4CAF50; }
+        .stopped { border-left: 4px solid #f44336; }
+        .chat-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .chat-header {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            font-weight: bold;
+        }
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 80%;
+        }
+        .user-message {
+            background: #e3f2fd;
+            margin-left: auto;
+            text-align: right;
+        }
+        .bot-message {
+            background: #f5f5f5;
+            margin-right: auto;
+        }
+        .chat-input {
+            display: flex;
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+        }
+        .chat-input button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .chat-input button:hover {
+            background: #5a67d8;
+        }
+        .quick-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 0 20px 20px;
+        }
+        .quick-question {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+        .quick-question:hover {
+            background: #e9ecef;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 AI Tax Helper Chatbot</h1>
+        <p>Your intelligent financial advisor powered by AI</p>
+    </div>
+
+    <div class="status">
+        <div class="status-item running">
+            <strong>Backend Status</strong><br>
+            <span id="backend-status">✅ Running on :5000</span>
+        </div>
+        <div class="status-item running">
+            <strong>Frontend Status</strong><br>
+            <span id="frontend-status">✅ Running on :8080</span>
+        </div>
+        <div class="status-item">
+            <strong>AI Chatbot</strong><br>
+            <span id="chatbot-status">✅ Ready to Chat</span>
+        </div>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            💬 Chat with your AI Tax Assistant
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot-message">
+                Hello! I'm your AI tax assistant. I can help you understand your tax situation, categorize expenses, and provide personalized financial insights. What would you like to know?
+            </div>
+        </div>
+        <div class="quick-questions">
+            <div class="quick-question" onclick="askQuestion('How much can I deduct in taxes?')">💰 Tax Deductions</div>
+            <div class="quick-question" onclick="askQuestion('What are my total expenses?')">📊 Total Expenses</div>
+            <div class="quick-question" onclick="askQuestion('Give me tax advice')">🎯 Tax Advice</div>
+            <div class="quick-question" onclick="askQuestion('Show me my spending categories')">📈 Categories</div>
+            <div class="quick-question" onclick="askQuestion('How much could I save on taxes?')">💡 Tax Savings</div>
+        </div>
+        <div class="loading" id="loading">🤖 Thinking...</div>
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Ask me anything about your taxes and finances..." 
+                   onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+        const USER_ID = 'demo_user';
+        let isInitialized = false;
+
+        // Initialize chatbot on page load
+        window.onload = async function() {
+            await initializeChatbot();
+            checkServices();
+        };
+
+        async function initializeChatbot() {
+            try {
+                const response = await fetch(`${API_BASE}/chatbot/initialize`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ user_id: USER_ID })
+                });
+                
+                if (response.ok) {
+                    isInitialized = true;
+                    console.log('Chatbot initialized with sample data');
+                }
+            } catch (error) {
+                console.error('Failed to initialize chatbot:', error);
+            }
+        }
+
+        async function checkServices() {
+            // Check backend
+            try {
+                const response = await fetch(`${API_BASE.replace('/api', '')}/health`);
+                if (response.ok) {
+                    document.getElementById('backend-status').innerHTML = '✅ Running on :5000';
+                } else {
+                    document.getElementById('backend-status').innerHTML = '❌ Not responding';
+                }
+            } catch (error) {
+                document.getElementById('backend-status').innerHTML = '❌ Offline';
+            }
+
+            // Check frontend (current page)
+            document.getElementById('frontend-status').innerHTML = '✅ Running on :8080';
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function askQuestion(question) {
+            document.getElementById('messageInput').value = question;
+            sendMessage();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // Add user message to chat
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                const response = await fetch(`${API_BASE}/chatbot/chat`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        user_id: USER_ID,
+                        message: message
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    addMessage(data.response, 'bot');
+                } else {
+                    addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+                }
+            } catch (error) {
+                addMessage('Sorry, I\'m having trouble connecting. Please check if the backend is running.', 'bot');
+                console.error('Chat error:', error);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function addMessage(text, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            messageDiv.textContent = text;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html>

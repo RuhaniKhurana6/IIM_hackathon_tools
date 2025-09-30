@@ -1,0 +1,21 @@
+WARNING:root:OpenAI API key not found. Using mock responses.
+WARNING:root:LangChain not available. Using mock responses.
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.29.24:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [29/Sep/2025 14:32:23] "GET /health HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [29/Sep/2025 14:32:33] "POST /api/chatbot/chat HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [29/Sep/2025 14:32:41] "POST /api/chatbot/initialize HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [29/Sep/2025 14:32:50] "POST /api/chatbot/chat HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [29/Sep/2025 14:32:50] "POST /api/chatbot/chat HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [29/Sep/2025 14:32:50] "POST /api/chatbot/chat HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [29/Sep/2025 14:32:59] "GET /api/chatbot/insights?user_id=test_user HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [29/Sep/2025 14:34:44] "GET /health HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [29/Sep/2025 14:34:44] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [29/Sep/2025 14:36:29] "GET /health HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [29/Sep/2025 14:39:05] "[33mOPTIONS /api/insights/spending-by-category HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [29/Sep/2025 14:39:05] "OPTIONS /api/tax/summary HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [29/Sep/2025 14:39:05] "[33mOPTIONS /budget/gauge HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [29/Sep/2025 14:39:05] "GET /api/tax/summary HTTP/1.1" 200 -
