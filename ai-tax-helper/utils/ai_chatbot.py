@@ -1,3 +1,66 @@
+import openai
+from datetime import datetime
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+class EnhancedChatbot:
+    def __init__(self):
+        self.conversation_history = []
+        self.user_data = {}
+        openai.api_key = os.getenv('OPENAI_API_KEY')
+        
+    def chat(self, user_id, message):
+        try:
+            messages = [
+                {
+                    "role": "system",
+                    "content": "You are a helpful AI assistant. Provide detailed answers to any questions."
+                },
+                {"role": "user", "content": message}
+            ]
+            
+            history = self.get_recent_history(user_id)
+            messages.extend(history)
+            
+            response = openai.ChatCompletion.create(
+                model="gpt-4",
+                messages=messages,
+                temperature=0.7,
+                max_tokens=1000,
+                top_p=1
+            )
+            
+            response_text = response.choices[0].message.content
+            self.store_conversation(user_id, message, response_text)
+            
+            return response_text
+            
+        except Exception as e:
+            return f"I apologize, but I encountered an error: {str(e)}"
+
+    # Add helper methods here
+    # ...existing code...
+
+    def get_recent_history(self, user_id):
+        """Retrieve recent conversation history for a specific user."""
+        return self.conversation_history.get(user_id, [])[-5:]
+
+    def store_conversation(self, user_id, user_message, bot_response):
+        """Store conversation history for a specific user."""
+        if user_id not in self.conversation_history:
+            self.conversation_history[user_id] = []
+        self.conversation_history[user_id].append({
+            "user": user_message,
+            "bot": bot_response,
+            "timestamp": datetime.now().isoformat()
+        })
+
+
+
+
+
 import os
 import json
 import logging
